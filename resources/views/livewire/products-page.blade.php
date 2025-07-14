@@ -66,11 +66,11 @@
               <h2 class="text-2xl font-bold dark:text-gray-400">Price</h2>
               <div class="w-16 pb-2 mb-6 border-b border-rose-600 dark:border-gray-400"></div>
               <div>
-                <div class="font-semibold">{{ Number::currency($price_range, 'INR') }}</div>
+                <div class="font-semibold">{{ Number::currency($price_range, 'PKR') }}</div>
                 <input type="range" wire:model.live="price_range" class="w-full h-1 mb-4 bg-blue-100 rounded appearance-none cursor-pointer" max="500000" value="0" step="1000">
                 <div class="flex justify-between">
-                  <span class="inline-block text-lg font-bold text-blue-400 ">{{ Number::currency(1000, 'INR') }}</span>
-                  <span class="inline-block text-lg font-bold text-blue-400 ">{{ Number::currency(500000, 'INR') }}</span>
+                  <span class="inline-block text-lg font-bold text-blue-400 ">{{ Number::currency(1000, 'PKR') }}</span>
+                  <span class="inline-block text-lg font-bold text-blue-400 ">{{ Number::currency(500000, 'PKR') }}</span>
                 </div>
               </div>
             </div>
@@ -110,7 +110,7 @@
                         </h3>
                       </div>
                       <p class="text-lg">
-                        <span class="text-green-600 dark:text-green-600">{{ Number::currency($product->price, 'INR') }}</span>
+                        <span class="text-green-600 dark:text-green-600">{{ Number::currency($product->price, 'PKR') }}</span>
                       </p>
                     </div>
                     <div class="flex justify-center p-4 border-t border-gray-300 dark:border-gray-700">

@@ -1,19 +1,23 @@
 <?php
 
+use App\Livewire\AboutUsPage;
+use App\Livewire\Auth\AccountPage;
 use App\Livewire\Auth\ForgotPasswordPage;
 use App\Livewire\Auth\LoginPage;
 use App\Livewire\Auth\RegisterPage;
 use App\Livewire\Auth\ResetPasswordPage;
-use App\Livewire\CancelPage;
-use App\Livewire\CartPage;
-use App\Livewire\CategoriesPage;
-use App\Livewire\CheckoutPage;
+use App\Livewire\ContactPage;
 use App\Livewire\HomePage;
-use App\Livewire\MyOrderDetailPage;
-use App\Livewire\MyOrdersPage;
 use App\Livewire\ProductDetailPage;
 use App\Livewire\ProductsPage;
+use App\Livewire\CategoriesPage;
+use App\Livewire\CartPage;
+use App\Livewire\CheckoutPage;
 use App\Livewire\SuccessPage;
+use App\Livewire\CancelPage;
+use App\Livewire\MyOrdersPage;
+use App\Livewire\MyOrderDetailPage;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
@@ -33,6 +37,7 @@ Route::get('/my-orders', MyOrdersPage::class)->name('my-orders');
 
 Route::get('/my-orders/{order}', MyOrderDetailPage::class)->name('my-order-details');
 
+Route::get('/account', AccountPage::class)->middleware('auth')->name('account');
 
 // Auth routes
 
@@ -44,9 +49,25 @@ Route::get('/forgot-password', ForgotPasswordPage::class)->name('forgot-password
 
 Route::get('/reset-password', ResetPasswordPage::class)->name('reset-password');
 
+// Logout route
+Route::post('/logout', function() {
+    Auth::logout();
+    return redirect()->route('index');
+})->middleware('auth')->name('logout');
+
 Route::get('/success', SuccessPage::class)->name('success');
 
 Route::get('/cancelled', CancelPage::class)->name('cancelled');
+
+Route::get('/contact', ContactPage::class)->name('contact');
+Route::get('/about-us', AboutUsPage::class)->name('about-us');
+
+// Payment Gateway Callback Routes
+Route::prefix('payment')->group(function () {
+    Route::get('/jazzcash/callback', [\App\Http\Controllers\PaymentController::class, 'jazzCashCallback']);
+    Route::get('/easypaisa/callback', [\App\Http\Controllers\PaymentController::class, 'easyPaisaCallback']);
+    Route::get('/bank/callback', [\App\Http\Controllers\PaymentController::class, 'bankCallback']);
+});
 
 
 // Route::get('/', function () {

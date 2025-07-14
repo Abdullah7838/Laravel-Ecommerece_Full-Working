@@ -34,7 +34,7 @@ class OrdersRelationManager extends RelationManager
 
                 TextColumn::make('grand_total')
                     ->label('Grand Total')
-                    ->money('INR')
+                    ->money('PKR')
                     ->sortable()
                     ->searchable(),
 

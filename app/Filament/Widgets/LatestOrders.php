@@ -28,7 +28,7 @@ class LatestOrders extends BaseWidget
 
                 TextColumn::make('grand_total')
                     ->label('Grand Total')
-                    ->money('INR')
+                    ->money('PKR')
                     ->sortable()
                     ->searchable(),
 

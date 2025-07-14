@@ -1,9 +1,17 @@
-<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
+<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto" wire:poll.5s>
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            @this.on('cart-updated', () => {
+                window.location.reload();
+            });
+        });
+    </script>
     <div class="container mx-auto px-4">
       <h1 class="text-2xl font-semibold mb-4">Shopping Cart</h1>
       <div class="flex flex-col md:flex-row gap-4">
         <div class="md:w-3/4">
           <div class="bg-white overflow-x-auto rounded-lg shadow-md p-6 mb-4">
+            @if(count($cartItems) > 0)
             <table class="w-full">
               <thead>
                 <tr>
@@ -15,27 +23,34 @@
                 </tr>
               </thead>
               <tbody>
+                @foreach($cartItems as $item)
                 <tr>
                   <td class="py-4">
                     <div class="flex items-center">
-                      <img class="h-16 w-16 mr-4" src="https://via.placeholder.com/150" alt="Product image">
-                      <span class="font-semibold">Product name</span>
+                      <img class="h-16 w-16 mr-4 object-cover" src="{{ $item['image'] }}" alt="Product image">
+                      <span class="font-semibold">{{ $item['product_name'] ?? 'Product' }}</span>
                     </div>
                   </td>
-                  <td class="py-4">$19.99</td>
+                  <td class="py-4">PKR {{ number_format($item['unit_amount'], 2) }}</td>
                   <td class="py-4">
                     <div class="flex items-center">
-                      <button class="border rounded-md py-2 px-4 mr-2">-</button>
-                      <span class="text-center w-8">1</span>
-                      <button class="border rounded-md py-2 px-4 ml-2">+</button>
+                      <button wire:click="decrementQuantity('{{ $item['product_id'] }}')" class="border rounded-md py-2 px-4 mr-2">-</button>
+                      <span class="text-center w-8">{{ $item['quantity'] }}</span>
+                      <button wire:click="incrementQuantity('{{ $item['product_id'] }}')" class="border rounded-md py-2 px-4 ml-2">+</button>
                     </div>
                   </td>
-                  <td class="py-4">$19.99</td>
-                  <td><button class="bg-slate-300 border-2 border-slate-400 rounded-lg px-3 py-1 hover:bg-red-500 hover:text-white hover:border-red-700">Remove</button></td>
+                  <td class="py-4">PKR {{ number_format($item['total_amount'], 2) }}</td>
+                  <td><button wire:click="removeItem('{{ $item['product_id'] }}')" class="bg-slate-300 border-2 border-slate-400 rounded-lg px-3 py-1 hover:bg-red-500 hover:text-white hover:border-red-700">Remove</button></td>
                 </tr>
-                <!-- More product rows -->
+                @endforeach
               </tbody>
             </table>
+            @else
+            <div class="text-center py-8">
+              <p class="text-gray-500 text-lg">Your cart is empty</p>
+              <a href="/products" class="inline-block mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg">Continue Shopping</a>
+            </div>
+            @endif
           </div>
         </div>
         <div class="md:w-1/4">
@@ -43,22 +58,26 @@
             <h2 class="text-lg font-semibold mb-4">Summary</h2>
             <div class="flex justify-between mb-2">
               <span>Subtotal</span>
-              <span>$19.99</span>
+              <span>PKR {{ number_format($grandTotal, 2) }}</span>
             </div>
             <div class="flex justify-between mb-2">
               <span>Taxes</span>
-              <span>$1.99</span>
+              <span>PKR {{ number_format($grandTotal * 0.1, 2) }}</span>
             </div>
             <div class="flex justify-between mb-2">
               <span>Shipping</span>
-              <span>$0.00</span>
+              <span>PKR 0.00</span>
             </div>
             <hr class="my-2">
             <div class="flex justify-between mb-2">
               <span class="font-semibold">Total</span>
-              <span class="font-semibold">$21.98</span>
+              <span class="font-semibold">PKR {{ number_format($grandTotal + ($grandTotal * 0.1), 2) }}</span>
             </div>
-            <button class="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
+            @if(count($cartItems) > 0)
+            <a href="/checkout" class="block text-center bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</a>
+            @else
+            <button disabled class="bg-gray-300 text-gray-500 py-2 px-4 rounded-lg mt-4 w-full cursor-not-allowed">Checkout</button>
+            @endif
           </div>
         </div>
       </div>

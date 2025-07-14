@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>{{ $title ?? 'ByteWebster' }}</title>
+        <title>{{ $title ?? 'Wibzr' }}</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
@@ -21,8 +21,8 @@
         @livewireScripts
 
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
+
         <x-livewire-alert::scripts />
-        
+
     </body>
 </html>

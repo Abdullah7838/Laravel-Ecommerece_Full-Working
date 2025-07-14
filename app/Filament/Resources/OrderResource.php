@@ -93,12 +93,12 @@ class OrderResource extends Resource
 
                         Select::make('currency')
                             ->options([
-                                'inr' => 'INR',
+                                'pkr' => 'PKR',
                                 'usd' => 'USD',
                                 'EUR' => 'EUR',
                                 'GBP' => 'GBP',
                             ])
-                            ->default('inr')
+                            ->default('pkr')
                             ->required(),
 
                         Select::make('shipping_method')
@@ -178,7 +178,7 @@ class OrderResource extends Resource
                                     }
 
                                     $set('grand_total', $total);
-                                    return \Illuminate\Support\Number::currency($total, 'INR');
+                                    return \Illuminate\Support\Number::currency($total, 'PKR');
                                 }),
 
 
@@ -204,7 +204,7 @@ class OrderResource extends Resource
                     ->label('Grand Total')
                     ->numeric()
                     ->sortable()
-                    ->money('INR'),
+                    ->money('PKR'),
 
                 TextColumn::make('payment_method')
                     ->label('Payment Method')

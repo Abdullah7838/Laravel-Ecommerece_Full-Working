@@ -131,11 +131,11 @@
                     <span class="font-semibold">Samsung Galaxy Watch6</span>
                   </div>
                 </td>
-                <td class="py-4">₹29,999.00</td>
+                <td class="py-4">PKR 29,999.00</td>
                 <td class="py-4">
                   <span class="text-center w-8">1</span>
                 </td>
-                <td class="py-4">₹29,999.00</td>
+                <td class="py-4">PKR 29,999.00</td>
               </tr>
               <tr wire:key="54">
                 <td class="py-4">
@@ -144,11 +144,11 @@
                     <span class="font-semibold">Samsung Galaxy Book3</span>
                   </div>
                 </td>
-                <td class="py-4">₹75,000.00</td>
+                <td class="py-4">PKR 75,000.00</td>
                 <td class="py-4">
                   <span class="text-center w-8">5</span>
                 </td>
-                <td class="py-4">₹375,000.00</td>
+                <td class="py-4">PKR 375,000.00</td>
               </tr>
               <!--[if ENDBLOCK]><![endif]-->
   
@@ -175,20 +175,20 @@
           <h2 class="text-lg font-semibold mb-4">Summary</h2>
           <div class="flex justify-between mb-2">
             <span>Subtotal</span>
-            <span>₹404,999.00</span>
+            <span>PKR 404,999.00</span>
           </div>
           <div class="flex justify-between mb-2">
             <span>Taxes</span>
-            <span>₹0.00</span>
+            <span>PKR 0.00</span>
           </div>
           <div class="flex justify-between mb-2">
             <span>Shipping</span>
-            <span>₹0.00</span>
+            <span>PKR 0.00</span>
           </div>
           <hr class="my-2">
           <div class="flex justify-between mb-2">
             <span class="font-semibold">Grand Total</span>
-            <span class="font-semibold">₹404,999.00</span>
+            <span class="font-semibold">PKR 404,999.00</span>
           </div>
   
         </div>
