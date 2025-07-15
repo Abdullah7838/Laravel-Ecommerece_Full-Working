@@ -30,7 +30,10 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Set working directory
 WORKDIR /var/www
+
+# Copy app source
 COPY . .
 
 # Install PHP dependencies
@@ -39,16 +42,16 @@ RUN composer install --no-interaction --no-scripts --optimize-autoloader
 # Install NPM dependencies and build assets
 RUN npm install --legacy-peer-deps && npm run build
 
-# Create storage link
-RUN php artisan storage:link
-
-# Ensure Laravel has correct permissions and folders
+# ✅ Create required Laravel folders BEFORE running artisan commands
 RUN mkdir -p storage/framework/views storage/framework/sessions storage/framework/cache bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
+# ✅ Create symbolic storage link
+RUN php artisan storage:link
+
 # Expose Laravel dev server port
 EXPOSE 8000
 
-# Run Laravel dev server
+# Start Laravel dev server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
