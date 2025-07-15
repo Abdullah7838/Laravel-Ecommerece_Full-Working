@@ -12,19 +12,21 @@ class MyOrdersPage extends Component
     
     public function mount()
     {
-        if (!Auth::check()) {
+        // Redirect to login if not authenticated
+        if (!auth()->check()) {
             return redirect()->route('login');
         }
         
-        $this->loadOrders();
-    }
-    
-    public function loadOrders()
-    {
-        $this->orders = Order::where('user_id', Auth::id())
+        // Load orders for the authenticated user
+        $this->orders = \App\Models\Order::where('user_id', auth()->id())
+            ->with(['items.product'])
             ->orderBy('created_at', 'desc')
             ->get();
+            
+        \Illuminate\Support\Facades\Log::info('Loaded ' . count($this->orders) . ' orders for user ID: ' . auth()->id());
     }
+    
+    // No longer needed as we load orders in mount method
     
     public function render()
     {

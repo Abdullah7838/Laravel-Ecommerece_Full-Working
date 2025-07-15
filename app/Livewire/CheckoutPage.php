@@ -90,7 +90,7 @@ public $couponCode = null;
     {
         $this->cartItems = CartManagement::getCartItemsFromCookie();
         $this->grandTotal = CartManagement::calculateGrandTotal($this->cartItems);
-        $this->taxAmount = $this->grandTotal * 0.1; // 10% tax
+        $this->taxAmount = 0; // No tax
         $this->shippingCost = 0; // Free shipping for now
         
         // Apply coupon if exists in session
@@ -212,13 +212,76 @@ public $couponCode = null;
                 'order_items' => $this->cartItems
             ]);
             
-            // Create order and clear cart
-            // This would be implemented in a real application to store order details in database
+            // Create order in database
+            $order = new \App\Models\Order([
+                'user_id' => auth()->id(),
+                'coupon_id' => $this->couponId,
+                'coupon_code' => $this->couponCode,
+                'discount_amount' => $this->discountAmount,
+                'subtotal' => $this->grandTotal,
+                'grand_total' => $this->finalTotal,
+                'payment_method' => $this->getPaymentMethodName(),
+                'payment_status' => 'pending', // Set as pending initially
+                'status' => 'new',
+                'currency' => 'PKR',
+                'shipping_amount' => $this->shippingCost,
+                'shipping_method' => 'Standard Shipping',
+                'notes' => ''
+            ]);
+            $order->save();
+            
+            // Store order ID in session
+            session(['order_id' => $order->id]);
+            \Illuminate\Support\Facades\Log::info('Order created and stored in session: ' . $order->id);
+            
+            // Create order items
+            foreach ($this->cartItems as $item) {
+                $order->items()->create([
+                    'product_id' => $item['product_id'],
+                    'quantity' => $item['quantity'],
+                    'unit_amount' => $item['unit_amount'],
+                    'total_amount' => $item['total_amount']
+                ]);
+            }
+            
+            // Create address
+            $order->address()->create([
+                'first_name' => $this->firstName,
+                'last_name' => $this->lastName,
+                'phone' => $this->phone,
+                'street_address' => $this->address, // Using address property for street_address field
+                'city' => $this->city,
+                'state' => $this->state,
+                'zip_code' => $this->zipCode
+            ]);
+            
+            // Store real order ID in session
+            session(['order_id' => $order->id]);
+            
+            // Clear cart
             CartManagement::clearCartItems();
             
-            // Redirect to success page
-            session()->flash('success', 'Order placed successfully!');
-            return redirect()->route('success');
+            // Update payment status based on payment method
+            if ($this->paymentMethod === 'cod') {
+                // For COD, mark as pending payment
+                $order->payment_status = 'pending';
+                $order->save();
+                
+                // Redirect to success page
+                session()->flash('success', 'Order placed successfully!');
+                return redirect()->route('success');
+            } else {
+                // For other payment methods, redirect to payment completion endpoint
+                try {
+                    // Call the payment completion endpoint
+                    return redirect()->route('payment.complete');
+                } catch (\Exception $e) {
+                    // If there's an error, log it and show error message
+                    \Illuminate\Support\Facades\Log::error('Payment error: ' . $e->getMessage());
+                    session()->flash('error', 'Payment processing error. Please try again.');
+                    return;
+                }
+            }
         } else {
             session()->flash('error', 'Payment failed. Please try again.');
         }

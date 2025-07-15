@@ -77,9 +77,12 @@ Route::prefix('payment')->group(function () {
     Route::get('/jazzcash/callback', [\App\Http\Controllers\PaymentController::class, 'jazzCashCallback']);
     Route::get('/easypaisa/callback', [\App\Http\Controllers\PaymentController::class, 'easyPaisaCallback']);
     Route::get('/bank/callback', [\App\Http\Controllers\PaymentController::class, 'bankCallback']);
+    Route::match(['get', 'post'], '/complete', [\App\Http\Controllers\PaymentController::class, 'completePayment'])->name('payment.complete');
 });
 
-
+Route::get('/up', function () {
+    return response()->json(['status' => 'ok'], 200);
+});
 // Route::get('/', function () {
 //     return view('welcome');
 // });

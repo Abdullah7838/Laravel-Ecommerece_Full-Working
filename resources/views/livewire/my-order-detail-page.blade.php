@@ -150,7 +150,7 @@
           <h1 class="font-3xl font-bold text-slate-500 mb-3">Shipping Address</h1>
           <div class="flex justify-between items-center">
             <div>
-              <p>{{ $address->address }}, {{ $address->city }}, {{ $address->state }}, {{ $address->zip_code }}</p>
+              <p>{{ $address->street_address }}, {{ $address->city }}, {{ $address->state }}, {{ $address->zip_code }}</p>
             </div>
             <div>
               <p class="font-semibold">Phone:</p>
@@ -168,10 +168,7 @@
             <span>Subtotal</span>
             <span>{{ $order->currency }} {{ number_format($order->subtotal ?? ($order->grand_total - ($order->shipping_amount ?? 0)), 2) }}</span>
           </div>
-          <div class="flex justify-between mb-2">
-            <span>Taxes</span>
-            <span>{{ $order->currency }} {{ number_format(($order->grand_total * 0.1), 2) }}</span>
-          </div>
+          <!-- Tax removed -->
           <div class="flex justify-between mb-2">
             <span>Shipping</span>
             <span>{{ $order->currency }} {{ number_format($order->shipping_amount ?? 0, 2) }}</span>

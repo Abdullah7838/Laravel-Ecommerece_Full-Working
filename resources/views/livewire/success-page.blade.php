@@ -57,11 +57,7 @@
                   <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Subtotal</p>
                   <p class="text-base leading-4 text-gray-600 dark:text-gray-400">{{ session('order_subtotal') ?? number_format(0, 2) }}</p>
                 </div>
-                <div class="flex items-center justify-between w-full">
-                  <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Tax
-                  </p>
-                  <p class="text-base leading-4 text-gray-600 dark:text-gray-400">{{ session('order_tax') ?? number_format(0, 2) }}</p>
-                </div>
+                <!-- Tax removed -->
                 <div class="flex items-center justify-between w-full">
                   <p class="text-base leading-4 text-gray-800 dark:text-gray-400">Shipping</p>
                   <p class="text-base leading-4 text-gray-600 dark:text-gray-400">{{ session('order_shipping') ?? number_format(0, 2) }}</p>

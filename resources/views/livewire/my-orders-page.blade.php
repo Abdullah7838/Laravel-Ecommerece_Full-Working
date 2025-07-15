@@ -1,4 +1,4 @@
-<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto" wire:poll.10s="loadOrders">
+<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto">
   <h1 class="text-4xl font-bold text-slate-500">My Orders</h1>
   
   <!-- Coupon Usage Stats Component -->

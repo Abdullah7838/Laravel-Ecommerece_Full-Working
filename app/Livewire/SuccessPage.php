@@ -24,26 +24,48 @@ class SuccessPage extends Component
     {
         // Check if we have order information in the session
         if (!session()->has('order_id')) {
+            session()->flash('error', 'No order information found');
             return redirect()->route('index');
         }
         
-        // Get order information from session
-        $this->orderId = session('order_id');
-        $this->orderName = session('order_name');
-        $this->orderAddress = session('order_address');
-        $this->orderCity = session('order_city');
-        $this->orderState = session('order_state');
-        $this->orderZip = session('order_zip');
-        $this->orderPhone = session('order_phone');
-        $this->orderSubtotal = session('order_subtotal');
-        $this->orderTax = session('order_tax');
-        $this->orderShipping = session('order_shipping');
-        $this->orderTotal = session('order_total');
-        $this->paymentMethod = session('payment_method');
+        // Get order from database
+        $orderId = session('order_id');
+        $order = \App\Models\Order::with(['items.product', 'address'])->find($orderId);
         
-        // Get order items from session with proper error handling
-        $orderItems = session('order_items');
-        $this->orderItems = is_array($orderItems) ? $orderItems : [];
+        if (!$order) {
+            \Illuminate\Support\Facades\Log::error('Order not found in database: ' . $orderId);
+            session()->flash('error', 'Order not found in database');
+            return redirect()->route('index');
+        }
+        
+        // Log successful order retrieval
+        \Illuminate\Support\Facades\Log::info('Order retrieved successfully: ' . $orderId);
+        
+        // Set order information from database
+        $this->orderId = $order->id;
+        $this->orderName = $order->address->first_name . ' ' . $order->address->last_name;
+        $this->orderAddress = $order->address->street_address;
+        $this->orderCity = $order->address->city;
+        $this->orderState = $order->address->state;
+        $this->orderZip = $order->address->zip_code;
+        $this->orderPhone = $order->address->phone;
+        $this->orderSubtotal = number_format($order->subtotal, 2);
+        $this->orderTax = number_format(0, 2); // No tax
+        $this->orderShipping = number_format($order->shipping_amount, 2);
+        $this->orderTotal = number_format($order->grand_total, 2);
+        $this->paymentMethod = $order->payment_method;
+        
+        // Get order items from database
+        $this->orderItems = $order->items->map(function($item) {
+            return [
+                'id' => $item->product_id,
+                'name' => $item->product->name,
+                'price' => $item->unit_amount,
+                'quantity' => $item->quantity,
+                'image' => $item->product->image,
+                'total' => $item->total_amount
+            ];
+        })->toArray();
     }
     
     public function render()

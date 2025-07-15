@@ -210,14 +210,7 @@
 						PKR {{ number_format($grandTotal, 2) }}
 					</span>
 				</div>
-				<div class="flex justify-between mb-2 font-bold">
-					<span>
-						Taxes
-					</span>
-					<span>
-						PKR {{ number_format($taxAmount, 2) }}
-					</span>
-				</div>
+				<!-- Tax removed -->
 				<div class="flex justify-between mb-2 font-bold">
 					<span>
 						Shipping Cost

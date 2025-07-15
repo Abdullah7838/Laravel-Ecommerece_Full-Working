@@ -61,10 +61,7 @@
               <span>Subtotal</span>
               <span>PKR {{ number_format($grandTotal, 2) }}</span>
             </div>
-            <div class="flex justify-between mb-2">
-              <span>Taxes</span>
-              <span>PKR {{ number_format($grandTotal * 0.1, 2) }}</span>
-            </div>
+            <!-- Tax removed -->
             <div class="flex justify-between mb-2">
               <span>Shipping</span>
               <span>PKR 0.00</span>
@@ -72,7 +69,7 @@
             <hr class="my-2">
             <div class="flex justify-between mb-2">
               <span class="font-semibold">Total</span>
-              <span class="font-semibold">PKR {{ number_format($grandTotal + ($grandTotal * 0.1), 2) }}</span>
+              <span class="font-semibold">PKR {{ number_format($grandTotal, 2) }}</span>
             </div>
             @if(count($cartItems) > 0)
             <button wire:click="proceedToCheckout" class="block text-center bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
