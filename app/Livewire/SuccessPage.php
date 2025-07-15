@@ -40,7 +40,10 @@ class SuccessPage extends Component
         $this->orderShipping = session('order_shipping');
         $this->orderTotal = session('order_total');
         $this->paymentMethod = session('payment_method');
-        $this->orderItems = session('order_items', []);
+        
+        // Get order items from session with proper error handling
+        $orderItems = session('order_items');
+        $this->orderItems = is_array($orderItems) ? $orderItems : [];
     }
     
     public function render()

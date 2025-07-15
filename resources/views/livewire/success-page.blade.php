@@ -95,7 +95,7 @@
         </div>
         <div class="px-4 mb-10">
           <h2 class="mb-4 text-xl font-semibold text-gray-700 dark:text-gray-400">Order Items</h2>
-          @if(count($orderItems) > 0)
+          @if(is_array($orderItems) && count($orderItems) > 0)
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -111,13 +111,13 @@
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     <div class="flex items-center">
-                      <img src="{{ !empty($item['product_image']) ? asset('storage/' . $item['product_image']) : asset('storage/products/default.jpg') }}" alt="{{ $item['product_name'] }}" class="w-12 h-12 mr-3 object-cover">
-                      <span>{{ $item['product_name'] }}</span>
+                      <img src="{{ !empty($item['product_image']) ? asset('storage/' . $item['product_image']) : asset('storage/products/default.jpg') }}" alt="{{ $item['product_name'] ?? 'Product' }}" class="w-12 h-12 mr-3 object-cover">
+                      <span>{{ $item['product_name'] ?? 'Product' }}</span>
                     </div>
                   </td>
-                  <td class="px-6 py-4">{{ $item['quantity'] }}</td>
-                  <td class="px-6 py-4">PKR {{ number_format($item['product_price'], 2) }}</td>
-                  <td class="px-6 py-4">PKR {{ number_format($item['total_amount'], 2) }}</td>
+                  <td class="px-6 py-4">{{ $item['quantity'] ?? 1 }}</td>
+                  <td class="px-6 py-4">PKR {{ number_format($item['product_price'] ?? 0, 2) }}</td>
+                  <td class="px-6 py-4">PKR {{ number_format($item['total_amount'] ?? 0, 2) }}</td>
                 </tr>
                 @endforeach
               </tbody>

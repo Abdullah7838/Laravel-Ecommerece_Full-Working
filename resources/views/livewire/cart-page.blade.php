@@ -1,8 +1,9 @@
-<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto" wire:poll.5s>
+<div class="w-full max-w-[85rem] py-10 px-4 sm:px-6 lg:px-8 mx-auto" wire:poll.2s>
     <script>
         document.addEventListener('livewire:initialized', () => {
             @this.on('cart-updated', () => {
-                window.location.reload();
+                // Refresh the component when cart is updated
+                @this.$refresh();
             });
         });
     </script>
