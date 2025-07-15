@@ -4,13 +4,18 @@ apt_pkgs = [
   "libicu-dev",
   "libxml2-dev",
   "zlib1g-dev",
-  "unzip"
+  "unzip",
+  "nodejs",
+  "npm"
 ]
 
 [phases.build]
 cmds = [
   "docker-php-ext-install intl zip pdo_mysql",
-  "composer install --optimize-autoloader --no-interaction --no-scripts"
+  "composer install --optimize-autoloader --no-interaction --no-scripts",
+  "npm install",
+  "npm run build",
+  "php artisan storage:link"
 ]
 
 [start]

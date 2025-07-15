@@ -23,6 +23,10 @@ RUN apt-get update && apt-get install -y \
         pdo_mysql \
         gd
 
+# Install Node.js and npm
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
@@ -31,6 +35,13 @@ COPY . .
 
 # Install PHP dependencies
 RUN composer install --no-interaction --no-scripts --optimize-autoloader
+
+# Install NPM dependencies and build assets
+RUN npm install && npm run build
+
+# Create storage link
+RUN php artisan storage:link
+
 # Ensure Laravel has correct permissions and folders
 RUN mkdir -p storage/framework/views storage/framework/sessions storage/framework/cache bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
