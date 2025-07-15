@@ -32,6 +32,14 @@ class RegisterPage extends Component
         Auth::login($user);
         
         session()->flash('success', 'Account created successfully!');
+        
+        // Check if there's an intended URL in the session
+        if (session()->has('intended_url')) {
+            $intendedUrl = session('intended_url');
+            session()->forget('intended_url');
+            return redirect($intendedUrl);
+        }
+        
         return $this->redirect('/', navigate: true);
     }
     

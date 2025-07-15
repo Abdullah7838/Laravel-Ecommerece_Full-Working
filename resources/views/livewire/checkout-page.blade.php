@@ -226,6 +226,18 @@
 						PKR {{ number_format($shippingCost, 2) }}
 					</span>
 				</div>
+				
+				@if($discountAmount > 0)
+				<div class="flex justify-between mb-2 font-bold text-green-600">
+					<span>
+						Discount ({{ $couponCode }})
+					</span>
+					<span>
+						- PKR {{ number_format($discountAmount, 2) }}
+					</span>
+				</div>
+				@endif
+				
 				<hr class="bg-slate-400 my-4 h-1 rounded">
 				<div class="flex justify-between mb-2 font-bold">
 					<span>
@@ -234,6 +246,11 @@
 					<span>
 						PKR {{ number_format($finalTotal, 2) }}
 					</span>
+				</div>
+				
+				<!-- Coupon Component -->
+				<div class="mt-4">
+					<livewire:apply-coupon />
 				</div>
 			</div>
 			<button wire:click="processPayment" class="bg-green-500 mt-4 w-full p-3 rounded-lg text-lg text-white hover:bg-green-600">
@@ -253,7 +270,7 @@
 					<li class="py-3 sm:py-4">
 						<div class="flex items-center">
 							<div class="flex-shrink-0">
-								<img alt="{{ $item['product_name'] ?? 'Product' }}" class="w-12 h-12 rounded-full" src="{{ $item['image'] ?? asset('images/no-image.png') }}">
+								<img alt="{{ $item['product_name'] ?? 'Product' }}" class="w-12 h-12 rounded-full" src="{{ $item['image'] ?? asset('storage/products/default.jpg') }}">
 							</div>
 							<div class="flex-1 min-w-0 ms-4">
 								<p class="text-sm font-medium text-gray-900 truncate dark:text-white">

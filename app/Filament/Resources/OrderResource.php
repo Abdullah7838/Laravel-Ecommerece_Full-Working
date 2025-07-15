@@ -49,6 +49,44 @@ class OrderResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
+                            
+                        Select::make('coupon_id')
+                            ->label('Coupon')
+                            ->relationship('coupon', 'code')
+                            ->searchable()
+                            ->preload()
+                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
+                                if ($state) {
+                                    $coupon = \App\Models\Coupon::find($state);
+                                    $set('coupon_code', $coupon->code);
+                                    
+                                    // Calculate discount based on subtotal
+                                    $subtotal = 0;
+                                    if ($repeaters = $get('items')) {
+                                        foreach ($repeaters as $key => $repeater) {
+                                            $subtotal += $get("items.{$key}.total_amount");
+                                        }
+                                    }
+                                    
+                                    $discount = $coupon->calculateDiscount($subtotal);
+                                    $set('discount_amount', $discount);
+                                } else {
+                                    $set('coupon_code', null);
+                                    $set('discount_amount', 0);
+                                }
+                            }),
+                            
+                        TextInput::make('coupon_code')
+                            ->label('Coupon Code')
+                            ->disabled()
+                            ->dehydrated(),
+                            
+                        TextInput::make('discount_amount')
+                            ->label('Discount Amount')
+                            ->numeric()
+                            ->prefix('PKR')
+                            ->default(0),
+                            
                         Select::make('payment_method')
                             ->options([
                                 'stripe' => 'Stripe',
@@ -165,8 +203,8 @@ class OrderResource extends Resource
 
                             ])->columns(12),
 
-                            Placeholder::make('grand_total_placeholder')
-                                ->label('Grand Total')
+                            Placeholder::make('subtotal_placeholder')
+                                ->label('Subtotal')
                                 ->content(function (Get $get, Set $set){
                                     $total = 0;
                                     if(!$repeaters = $get('items')){
@@ -177,10 +215,38 @@ class OrderResource extends Resource
                                         $total += $get("items.{$key}.total_amount");
                                     }
 
+                                    $set('subtotal', $total);
+                                    return \Illuminate\Support\Number::currency($total, 'PKR');
+                                }),
+                                
+                            Hidden::make('subtotal')
+                                ->default(0),
+                                
+                            Placeholder::make('discount_placeholder')
+                                ->label('Discount')
+                                ->content(function (Get $get){
+                                    $discount = $get('discount_amount') ?? 0;
+                                    return \Illuminate\Support\Number::currency($discount, 'PKR');
+                                }),
+                                
+                            Placeholder::make('shipping_placeholder')
+                                ->label('Shipping')
+                                ->content(function (Get $get){
+                                    $shipping = $get('shipping_amount') ?? 0;
+                                    return \Illuminate\Support\Number::currency($shipping, 'PKR');
+                                }),
+
+                            Placeholder::make('grand_total_placeholder')
+                                ->label('Grand Total')
+                                ->content(function (Get $get, Set $set){
+                                    $subtotal = $get('subtotal') ?? 0;
+                                    $discount = $get('discount_amount') ?? 0;
+                                    $shipping = $get('shipping_amount') ?? 0;
+                                    
+                                    $total = $subtotal - $discount + $shipping;
                                     $set('grand_total', $total);
                                     return \Illuminate\Support\Number::currency($total, 'PKR');
                                 }),
-
 
                             Hidden::make('grand_total')
                                 ->default(0)
@@ -200,6 +266,18 @@ class OrderResource extends Resource
                     ->sortable()
                     ->searchable(),
 
+                TextColumn::make('subtotal')
+                    ->label('Subtotal')
+                    ->numeric()
+                    ->sortable()
+                    ->money('PKR'),
+                    
+                TextColumn::make('discount_amount')
+                    ->label('Discount')
+                    ->numeric()
+                    ->sortable()
+                    ->money('PKR'),
+                    
                 TextColumn::make('grand_total')
                     ->label('Grand Total')
                     ->numeric()

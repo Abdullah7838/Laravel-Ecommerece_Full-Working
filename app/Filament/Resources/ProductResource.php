@@ -126,7 +126,8 @@ class ProductResource extends Resource
 
                         Toggle::make('in_stock')
                             ->required()
-                            ->default(true),
+                            ->default(true)
+                            ->helperText('Automatically managed based on stock quantity'),
 
                         Toggle::make('is_active')
                             ->required()
@@ -138,6 +139,23 @@ class ProductResource extends Resource
                         Toggle::make('on_sale')
                             ->required(),
 
+                    ]),
+                    
+                    Section::make('Inventory Management')->schema([
+                        TextInput::make('stock_quantity')
+                            ->label('Stock Quantity')
+                            ->numeric()
+                            ->minValue(0)
+                            ->default(0)
+                            ->required()
+                            ->helperText('Current available quantity'),
+                            
+                        TextInput::make('low_stock_threshold')
+                            ->label('Low Stock Threshold')
+                            ->numeric()
+                            ->minValue(1)
+                            ->placeholder('No threshold')
+                            ->helperText('Get notified when stock falls below this number'),
                     ])
 
                 ])->columnSpan(1)

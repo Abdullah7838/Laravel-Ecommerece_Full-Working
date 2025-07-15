@@ -32,7 +32,7 @@ class CartManagement {
                 $cart_items[] = [
                     'product_id' => $product->id,
                     'product_name' => $product->name,
-                    'image' => asset('storage/' . $product->images[0]),
+                    'image' => !empty($product->imageUrls) ? $product->imageUrls[0] : asset('storage/products/default.jpg'),
                     'quantity' => 1,
                     'unit_amount' => $product->price,
                     'total_amount' => $product->price

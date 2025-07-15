@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -25,6 +26,8 @@ class Product extends Model
         'is_featured',
         'in_stock',
         'on_sale',
+        'stock_quantity',
+        'low_stock_threshold',
         'meta_title',
         'meta_description',
         'meta_keywords',
@@ -39,6 +42,22 @@ class Product extends Model
     protected $casts = [
         'images' => 'array',
     ];
+    
+    /**
+     * Get the image URLs with absolute paths
+     *
+     * @return array
+     */
+    public function getImageUrlsAttribute()
+    {
+        if (empty($this->images)) {
+            return [];
+        }
+        
+        return array_map(function ($image) {
+            return asset('storage/' . $image);
+        }, $this->images);
+    }
 
     /**
      * Get the category that owns the product.
@@ -64,6 +83,42 @@ class Product extends Model
 
     public function orderItems()
     {
-        return $this->belongsTo(OrderItem::class);
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Check if product is low on stock
+     */
+    public function isLowStock(): bool
+    {
+        if (!$this->in_stock || $this->low_stock_threshold === null) {
+            return false;
+        }
+
+        return $this->stock_quantity <= $this->low_stock_threshold;
+    }
+
+    /**
+     * Update stock quantity
+     */
+    public function updateStock(int $quantity, string $operation = 'decrease'): void
+    {
+        if ($operation === 'decrease') {
+            $this->stock_quantity = max(0, $this->stock_quantity - $quantity);
+            
+            // Update in_stock status if quantity reaches 0
+            if ($this->stock_quantity === 0) {
+                $this->in_stock = false;
+            }
+        } else {
+            $this->stock_quantity += $quantity;
+            
+            // Update in_stock status if product was out of stock
+            if (!$this->in_stock && $this->stock_quantity > 0) {
+                $this->in_stock = true;
+            }
+        }
+
+        $this->save();
     }
 }

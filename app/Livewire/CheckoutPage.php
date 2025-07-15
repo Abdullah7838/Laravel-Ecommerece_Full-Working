@@ -9,10 +9,13 @@ use Livewire\Attributes\Rule;
 class CheckoutPage extends Component
 {
     public $cartItems = [];
-    public $grandTotal = 0;
-    public $taxAmount = 0;
-    public $shippingCost = 0;
-    public $finalTotal = 0;
+public $grandTotal = 0;
+public $taxAmount = 0;
+public $shippingCost = 0;
+public $discountAmount = 0;
+public $finalTotal = 0;
+public $couponId = null;
+public $couponCode = null;
     
     // Shipping address fields
     #[Rule('required|min:2')]
@@ -66,7 +69,21 @@ class CheckoutPage extends Component
     
     public function mount()
     {
+        // Check if user is logged in, if not redirect to login page
+        if (!auth()->check()) {
+            // Store intended URL in session
+            session(['intended_url' => route('checkout')]);
+            redirect()->route('login');
+            return;
+        }
+        
         $this->loadCartItems();
+        
+        // Listen for coupon events
+        $this->listeners = [
+            'coupon-applied' => 'handleCouponApplied',
+            'coupon-removed' => 'handleCouponRemoved'
+        ];
     }
     
     public function loadCartItems()
@@ -75,7 +92,18 @@ class CheckoutPage extends Component
         $this->grandTotal = CartManagement::calculateGrandTotal($this->cartItems);
         $this->taxAmount = $this->grandTotal * 0.1; // 10% tax
         $this->shippingCost = 0; // Free shipping for now
-        $this->finalTotal = $this->grandTotal + $this->taxAmount + $this->shippingCost;
+        
+        // Apply coupon if exists in session
+        if (session()->has('coupon')) {
+            $coupon = session('coupon');
+            $this->couponId = $coupon['id'];
+            $this->couponCode = $coupon['code'];
+            $this->discountAmount = $coupon['discount_amount'];
+        } else {
+            $this->discountAmount = 0;
+        }
+        
+        $this->finalTotal = $this->grandTotal + $this->taxAmount + $this->shippingCost - $this->discountAmount;
     }
     
     public function processPayment()
@@ -177,6 +205,8 @@ class CheckoutPage extends Component
                 'order_subtotal' => number_format($this->grandTotal, 2),
                 'order_tax' => number_format($this->taxAmount, 2),
                 'order_shipping' => number_format($this->shippingCost, 2),
+                'order_discount' => number_format($this->discountAmount, 2),
+                'order_coupon' => $this->couponCode,
                 'order_total' => number_format($this->finalTotal, 2),
                 'payment_method' => $this->getPaymentMethodName(),
                 'order_items' => $this->cartItems
@@ -273,6 +303,33 @@ class CheckoutPage extends Component
             // Enable the OTP field
             $this->easyPaisaFields['otp'] = '';
         }
+    }
+    
+    /**
+     * Handle coupon applied event
+     */
+    public function handleCouponApplied($data)
+    {
+        $this->discountAmount = $data['discount_amount'];
+        $this->finalTotal = $this->grandTotal + $this->taxAmount + $this->shippingCost - $this->discountAmount;
+        
+        // Get coupon details from session
+        if (session()->has('coupon')) {
+            $coupon = session('coupon');
+            $this->couponId = $coupon['id'];
+            $this->couponCode = $coupon['code'];
+        }
+    }
+    
+    /**
+     * Handle coupon removed event
+     */
+    public function handleCouponRemoved()
+    {
+        $this->discountAmount = 0;
+        $this->couponId = null;
+        $this->couponCode = null;
+        $this->finalTotal = $this->grandTotal + $this->taxAmount + $this->shippingCost;
     }
     
     public function render()

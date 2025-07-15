@@ -111,7 +111,7 @@
                 <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     <div class="flex items-center">
-                      <img src="{{ asset('storage/' . $item['product_image']) }}" alt="{{ $item['product_name'] }}" class="w-12 h-12 mr-3 object-cover">
+                      <img src="{{ !empty($item['product_image']) ? asset('storage/' . $item['product_image']) : asset('storage/products/default.jpg') }}" alt="{{ $item['product_name'] }}" class="w-12 h-12 mr-3 object-cover">
                       <span>{{ $item['product_name'] }}</span>
                     </div>
                   </td>

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Helpers\CartManagement;
 use Livewire\Component;
 use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Auth;
 
 class CartPage extends Component
 {
@@ -44,6 +45,17 @@ class CartPage extends Component
         CartManagement::removeCartItems($productId);
         $this->loadCartItems();
         $this->dispatch('cart-updated');
+    }
+    
+    public function proceedToCheckout()
+    {
+        if (!Auth::check()) {
+            // Store intended URL in session
+            session()->put('intended_url', '/checkout');
+            return redirect()->route('login');
+        }
+        
+        return redirect()->to('/checkout');
     }
     
     public function render()

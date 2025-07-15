@@ -27,7 +27,7 @@
                 <tr>
                   <td class="py-4">
                     <div class="flex items-center">
-                      <img class="h-16 w-16 mr-4 object-cover" src="{{ $item['image'] }}" alt="Product image">
+                      <img class="h-16 w-16 mr-4 object-cover" src="{{ $item['image'] ?? asset('storage/products/default.jpg') }}" alt="Product image">
                       <span class="font-semibold">{{ $item['product_name'] ?? 'Product' }}</span>
                     </div>
                   </td>
@@ -74,7 +74,7 @@
               <span class="font-semibold">PKR {{ number_format($grandTotal + ($grandTotal * 0.1), 2) }}</span>
             </div>
             @if(count($cartItems) > 0)
-            <a href="/checkout" class="block text-center bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</a>
+            <button wire:click="proceedToCheckout" class="block text-center bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
             @else
             <button disabled class="bg-gray-300 text-gray-500 py-2 px-4 rounded-lg mt-4 w-full cursor-not-allowed">Checkout</button>
             @endif

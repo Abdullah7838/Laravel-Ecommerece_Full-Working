@@ -100,7 +100,7 @@
                   <div class="border border-gray-300 dark:border-gray-700">
                     <div class="relative bg-gray-200">
                       <a wire:navigate href="{{ route('product-details', $product->slug) }}" class="">
-                        <img src="{{ url('storage', $product->images[0]) }}" alt="{{ $product->name }}" class="object-cover w-full h-56 mx-auto ">
+                        <img src="{{ !empty($product->imageUrls) ? $product->imageUrls[0] : asset('storage/products/default.jpg') }}" alt="{{ $product->name }}" class="object-cover w-full h-56 mx-auto ">
                       </a>
                     </div>
                     <div class="p-3">

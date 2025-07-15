@@ -20,6 +20,14 @@ class LoginPage extends Component
         
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password])) {
             session()->flash('success', 'You have been successfully logged in!');
+            
+            // Check if there's an intended URL in the session
+            if (session()->has('intended_url')) {
+                $intendedUrl = session('intended_url');
+                session()->forget('intended_url');
+                return redirect($intendedUrl);
+            }
+            
             return $this->redirect('/', navigate: true);
         }
         

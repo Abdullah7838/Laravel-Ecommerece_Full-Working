@@ -62,6 +62,16 @@ Route::get('/cancelled', CancelPage::class)->name('cancelled');
 Route::get('/contact', ContactPage::class)->name('contact');
 Route::get('/about-us', AboutUsPage::class)->name('about-us');
 
+// Coupon Help Page
+Route::get('/coupon-help', function() {
+    return view('coupon-help');
+})->name('coupon-help');
+
+// Legacy Admin Routes - Commented out as we're now using Filament admin panel
+// Route::prefix('admin')->middleware('auth')->group(function () {
+//     Route::get('/coupons', App\Livewire\Admin\CouponManagement::class)->name('admin.coupons');
+// });
+
 // Payment Gateway Callback Routes
 Route::prefix('payment')->group(function () {
     Route::get('/jazzcash/callback', [\App\Http\Controllers\PaymentController::class, 'jazzCashCallback']);
