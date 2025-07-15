@@ -1,6 +1,6 @@
 [build]
   builder = "nixpacks"
-  buildCommand = "echo 'Building application...'"
+  buildCommand = "composer install --optimize-autoloader --no-interaction --no-scripts && npm install --legacy-peer-deps && npm run build && php artisan storage:link"
 
 [deploy]
   startCommand = "php artisan serve --host=0.0.0.0 --port=$PORT"

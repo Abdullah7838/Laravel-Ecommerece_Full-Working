@@ -37,7 +37,7 @@ COPY . .
 RUN composer install --no-interaction --no-scripts --optimize-autoloader
 
 # Install NPM dependencies and build assets
-RUN npm install && npm run build
+RUN npm install --legacy-peer-deps && npm run build
 
 # Create storage link
 RUN php artisan storage:link
