@@ -1,0 +1,17 @@
+[phases.setup]
+apt_pkgs = [
+  "libzip-dev",
+  "libicu-dev",
+  "libxml2-dev",
+  "zlib1g-dev",
+  "unzip"
+]
+
+[phases.build]
+cmds = [
+  "docker-php-ext-install intl zip pdo_mysql",
+  "composer install --optimize-autoloader --no-interaction --no-scripts"
+]
+
+[start]
+cmd = "php artisan serve --host=0.0.0.0 --port=8000"
