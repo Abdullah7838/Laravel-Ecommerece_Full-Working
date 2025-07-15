@@ -1,57 +1,34 @@
 FROM php:8.2-cli
 
-# Install system dependencies
+# System deps
 RUN apt-get update && apt-get install -y \
-    unzip \
-    zip \
-    libzip-dev \
-    libicu-dev \
-    libonig-dev \
-    libxml2-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libfreetype6-dev \
-    libwebp-dev \
-    libxpm-dev \
-    git \
-    curl \
-    vim \
+    unzip zip git curl libzip-dev libpng-dev libonig-dev libxml2-dev \
+    libjpeg-dev libfreetype6-dev libwebp-dev libxpm-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm \
-    && docker-php-ext-install \
-        intl \
-        zip \
-        pdo_mysql \
-        gd
+    && docker-php-ext-install pdo_mysql zip gd
 
-# Install Node.js and npm
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs
+# Node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
 
-# Install Composer
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# App setup
 WORKDIR /var/www
-
-# Copy app source
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-interaction --no-scripts --optimize-autoloader
-
-# Install NPM dependencies and build assets
-RUN npm install --legacy-peer-deps && npm run build
-
-# ✅ Create required Laravel folders BEFORE running artisan commands
+# Permissions
 RUN mkdir -p storage/framework/views storage/framework/sessions storage/framework/cache bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache
 
-# ✅ Create symbolic storage link
+# Build
+RUN composer install --no-interaction --no-scripts --optimize-autoloader
+RUN npm install --legacy-peer-deps && npm run build
 RUN php artisan storage:link
 
-# Expose Laravel dev server port
+# Expose Laravel port
 EXPOSE 8000
 
-# Start Laravel dev server
+# Start dev server
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
