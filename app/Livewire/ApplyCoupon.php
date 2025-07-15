@@ -9,7 +9,7 @@ use Livewire\Attributes\Rule;
 
 class ApplyCoupon extends Component
 {
-    #[Rule('required|min:3')]
+    #[Rule('nullable|min:3')]
     public $couponCode = '';
     
     public $discount = 0;
